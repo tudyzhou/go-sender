@@ -1,40 +1,43 @@
 package sender
 
 import (
+	"github.com/tudyzhou/go-sender/config"
 	"net/http"
 	"time"
 )
 
-var (
-	chs = make([]chan EmailInfo, 10)
-)
-
 // parser request and send email
 func TaskHandler(rw http.ResponseWriter, req *http.Request) {
-	info := EmailInfo{"sender@163.com", "subject", "test body", ""}
+	info := EmailInfo{"go_sender@163.com", "subject", "test body", ""}
 	rw.WriteHeader(200)
 	rw.Write([]byte("got it"))
-	go sender_test(info)
+	go sender_go(&info)
 }
 
-func sender_test(info EmailInfo) {
-	t := time.NewTicker(3 * time.Second)
+func sender_go(info *EmailInfo) {
+	// task time out
+	t := time.NewTimer(config.SendEmailTimeOut)
+	flg := make(chan bool, 1)
 	defer t.Stop()
 
-	flg := make(chan bool, 1)
 	go func() {
-		println("test", info.Body)
-		for i := 0; i < 1000000000000; i++ {
-		} // Debug
-		flg <- true
+		//for i := 0; i < 1000000000000; i++ {
+		//} // Debug
+		err := Sender.Send(info)
+		if err != nil {
+			config.Logger.Println("[ERROR] send email error", err)
+		} else {
+			flg <- true
+		}
 	}()
 
 	select {
 	case <-flg:
-		println("finish")
+		config.Logger.Println("[DETAIL] send email success")
 		return
 	case <-t.C:
-		println("time out")
+		// todo: time out, and send again
+		config.Logger.Println("[ERROR] time out")
 		return
 	}
 }

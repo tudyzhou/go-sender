@@ -1,5 +1,9 @@
 package config
 
+import (
+	"time"
+)
+
 // Email unit struct
 type EmailModel struct {
 	Agent    string
@@ -24,4 +28,10 @@ var (
 	ServerConfig = ServerModel{"localhost", "6666"}
 	// Chanel list
 	// TaskChs = make([]chan EmailInfo, 10)
+	SendEmailTimeOut = 20 * time.Second
 )
+
+// Parser config file
+func ParserConfigFile(f_p string) (err error) {
+	return
+}

@@ -23,7 +23,7 @@ func main() {
 
 // http listen server
 func server() {
-	runtime.GOMAXPROCS(runtime.NumCPU() - 1)
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	addr := config.ServerConfig.Domain + ":" + config.ServerConfig.Port
 	http.HandleFunc("/", sender.TaskHandler)
 

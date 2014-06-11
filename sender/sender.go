@@ -17,6 +17,7 @@ type sender struct {
 	EmailLis []config.EmailModel
 }
 
+// Sender instance
 var (
 	Sender = &sender{config.EmailConfig}
 )
@@ -47,6 +48,7 @@ func (api *sender) Send(e *EmailInfo) (err error) {
 		s.Password,
 		s.Host,
 	)
+
 	err = smtp.SendMail(
 		s.Host+":"+s.Port,
 		auth,
@@ -54,5 +56,6 @@ func (api *sender) Send(e *EmailInfo) (err error) {
 		[]string{e.To},
 		msg,
 	)
+
 	return
 }
